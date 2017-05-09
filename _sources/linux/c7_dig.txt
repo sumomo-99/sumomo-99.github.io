@@ -1,0 +1,43 @@
+[CentOS 7] dig, host, nslookup, nsupdateコマンドをインストールする
+==================================================================
+
+.. highlight:: console
+
+digやnslookupなどDNS名前解決関連ツールがインストールされていない場合は、 **bind-utils** パッケージを導入します。
+
+インストール
+------------
+
+bind-utilsパッケージは、 :command:`yum` でインストールできます。
+
+::
+
+ # yum install bind-utils
+
+bind-utilsパッケージには、以下のコマンドが含まれています。
+
+ * dig
+ * host
+ * nslookup
+ * nsupdate
+
+インストール先を確認する
+------------------------
+
+パッケージのインストール先は、 ``rpm -ql パッケージ名`` で調べることができます。
+
+::
+
+ # rpm -ql bind-utils
+ /etc/trusted-key.key
+ /usr/bin/dig
+ /usr/bin/host
+ /usr/bin/nslookup
+ /usr/bin/nsupdate
+ /usr/share/man/man1/dig.1.gz
+ /usr/share/man/man1/host.1.gz
+ /usr/share/man/man1/nslookup.1.gz
+ /usr/share/man/man1/nsupdate.1.gz
+
+この環境では、/usr/bin/ にコマンドがインストールされたようです。
+

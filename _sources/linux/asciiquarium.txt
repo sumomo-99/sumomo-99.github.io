@@ -1,0 +1,51 @@
+魚を鑑賞する方法
+================
+
+.. highlight:: none
+
+.. image:: images/ASCIIQuarium/asciiquarium01.PNG
+
+``ASCIIQuarium`` は、アスキーアートで魚をアニメーションさせる **Perl** スクリプトです。
+
+.. contents::
+   :local:
+   :depth: 1 
+
+ASCIIQuariumのインストール
+--------------------------
+
+ASCIIQuariumのスクリプトをダウンロードして解凍します。
+
+::
+
+ wget http://www.robobunny.com/projects/asciiquarium/asciiquarium.tar.gz
+ tar xvfz asciiquarium.tar.gz
+
+``Term::Animation`` モジュールが必要なのでインストールします。
+
+::
+
+ yum install cpan
+ cpan Term::Animation
+ 
+ASCIIQuariumの起動
+------------------
+
+ASCIIQuariumのスクリプトを実行します。
+
+::
+
+ cd asciiquarium_1.1
+ ./asciiquarium
+ 
+操作方法
+--------
+
+:kbd:`q`    ASCIIQuariumを終了します。
+:kbd:`r`    画面を再描画します。
+:kbd:`p`    画面を一時停止、再開します。
+ 
+.. image:: images/ASCIIQuarium/asciiquarium02.PNG
+.. image:: images/ASCIIQuarium/asciiquarium03.PNG
+.. image:: images/ASCIIQuarium/asciiquarium04.PNG
+.. image:: images/ASCIIQuarium/asciiquarium05.PNG

@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CentOS 7 にObserviumをインストールする &mdash; Linux Tips 0.1 ドキュメント</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Linux Tips 0.1 ドキュメント" href="../index.html"/>
+        <link rel="up" title="Observium" href="index.html"/>
+        <link rel="next" title="Unix Agentをインストールする" href="unix_agent.html"/>
+        <link rel="prev" title="Apachceのモニタリング" href="apache.html"/>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75466879-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+
+          
+            <a href="../index.html" class="icon icon-home"> Linux Tips
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+<a href="https://twitter.com/sumomo_99" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sumomo_99</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<br>
+<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aws/index.html">AWS (Amazon Web Services)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcp/index.html">GCP (Google Cloud Platform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mysql/index.html">MySQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../redis/index.html">Redis (in-memory data structure store)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grafana/index.html">Grafana</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc-sphinx/index.html">Sphinx (Python Documentation Generator)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Observium</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache.html">Apachceのモニタリング</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CentOS 7 にObserviumをインストールする</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">インストール環境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">リポジトリの追加</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">パッケージの追加</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Observiumのダウンロード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mysql">MySQLの設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fping">Fpingの設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selinux">SELinuxの無効化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rrd">RRDディレクトリの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#apache">Apacheの設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">ログディレクトリの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Observium管理ユーザの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snmpd">snmpdの設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cron">cronの設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unix_agent.html">Unix Agentをインストールする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlevel.html">ユーザーレベル</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Linux Tips</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Observium</a> &raquo;</li>
+      
+    <li>CentOS 7 にObserviumをインストールする</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="centos-7-observium">
+<h1>CentOS 7 にObserviumをインストールする<a class="headerlink" href="#centos-7-observium" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>サーバのリソース情報収集のために、 <a class="reference external" href="http://www.observium.org/">Observium</a> をインストールしてみました。
+Observiumは、 <a class="reference external" href="http://oss.oetiker.ch/mrtg/">MRTG</a> や <a class="reference external" href="http://www.cacti.net/">Cacti</a> のようなネットワークモニタリングツールです。</p>
+<p>ObserviumにはCommunity版とProfessional版の２つがあります。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="68%" />
+<col width="14%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">Community</th>
+<th class="head">Professional</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ソフトウェアのリアルタイム更新およびバグフィックス</td>
+<td>×</td>
+<td>○</td>
+</tr>
+<tr class="row-odd"><td>6ヶ月単位のソフトウェアリリース</td>
+<td>○</td>
+<td>×</td>
+</tr>
+<tr class="row-even"><td>デバイスとメトリクスのオートディスカバリ</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr class="row-odd"><td>ディスカバリプロトコルによるネットワークマッピング</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr class="row-even"><td>数百のデバイスの自動認識</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr class="row-odd"><td>ルールベースによる自動グループ化</td>
+<td>×</td>
+<td>○</td>
+</tr>
+<tr class="row-even"><td>閾値とステータスによるアラートシステム</td>
+<td>×</td>
+<td>○</td>
+</tr>
+<tr class="row-odd"><td>トラフィック課金の管理システム</td>
+<td>×</td>
+<td>○</td>
+</tr>
+<tr class="row-even"><td>サポートサービス</td>
+<td>×</td>
+<td>○</td>
+</tr>
+<tr class="row-odd"><td>料金</td>
+<td>無料</td>
+<td>150ポンド/年</td>
+</tr>
+</tbody>
+</table>
+<p>今回はCommunity版のインストールをしてみます。</p>
+<p>公式ページの<a class="reference external" href="http://www.observium.org/docs/install_rhel7/">インストール手順</a>にしたがい、作業をしていきます。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id8">インストール環境</a></li>
+<li><a class="reference internal" href="#id3" id="id9">リポジトリの追加</a></li>
+<li><a class="reference internal" href="#id4" id="id10">パッケージの追加</a></li>
+<li><a class="reference internal" href="#id5" id="id11">Observiumのダウンロード</a></li>
+<li><a class="reference internal" href="#mysql" id="id12">MySQLの設定</a></li>
+<li><a class="reference internal" href="#fping" id="id13">Fpingの設定</a></li>
+<li><a class="reference internal" href="#selinux" id="id14">SELinuxの無効化</a></li>
+<li><a class="reference internal" href="#rrd" id="id15">RRDディレクトリの作成</a></li>
+<li><a class="reference internal" href="#apache" id="id16">Apacheの設定</a></li>
+<li><a class="reference internal" href="#id6" id="id17">ログディレクトリの作成</a></li>
+<li><a class="reference internal" href="#id7" id="id18">Observium管理ユーザの作成</a></li>
+<li><a class="reference internal" href="#snmpd" id="id19">snmpdの設定</a></li>
+<li><a class="reference internal" href="#cron" id="id20">cronの設定</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id8">インストール環境</a><a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>以下の環境にインストールします。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>OS</td>
+<td>CentOS7.2</td>
+</tr>
+<tr class="row-even"><td>PHP</td>
+<td>7.0.5</td>
+</tr>
+<tr class="row-odd"><td>Apache</td>
+<td>2.4.6</td>
+</tr>
+<tr class="row-even"><td>MariaDB</td>
+<td>10.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id9">リポジトリの追加</a><a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>RPMforge</strong> と <strong>EPEL</strong> リポジトリが追加されていない場合は、リポジトリの追加をします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt
+rpm -Uvh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id10">パッケージの追加</a><a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Observiumに必要なパッケージをインストールします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>yum install --enablerepo=remi,remi-php70,rpmforge,epel wget httpd php php-mysql php-gd \
+php-posix php-mcrypt php-pear cronie net-snmp net-snmp-utils fping mariadb-server mariadb \
+MySQL-python rrdtool subversion jwhois ipmitool graphviz ImageMagick
+</pre></div>
+</div>
+<p>この環境ではphp7を利用しているため、リポジトリにremi-php70を追加しています。
+利用するリポジトリは、インストールする環境に合わせて変更してください。</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id11">Observiumのダウンロード</a><a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Observiumをインストールしたいディレクトリを作成します。
+ここでは公式の手順にしたがい、 <strong>/opt/observium</strong> にインストールすることにします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>mkdir -p /opt/observium
+cd /opt
+</pre></div>
+</div>
+<p>ディレクトリの作成後、ObserbiumのCommunity版をダウンロードして解凍します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>wget http://www.observium.org/observium-community-latest.tar.gz
+tar zxvf observium-community-latest.tar.gz
+</pre></div>
+</div>
+</div>
+<div class="section" id="mysql">
+<h2><a class="toc-backref" href="#id12">MySQLの設定</a><a class="headerlink" href="#mysql" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Observium用のデータベースとユーザを設定します。
+データベース名やユーザ名は任意のものを設定できますが、ここでは以下の設定を利用します。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>データベース名</td>
+<td>observium</td>
+</tr>
+<tr class="row-even"><td>ユーザ名</td>
+<td>observium</td>
+</tr>
+<tr class="row-odd"><td>パスワード</td>
+<td>password</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-mysql"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">observium</span> <span class="k">DEFAULT</span> <span class="k">CHARACTER</span> <span class="kt">SET</span> <span class="n">utf8</span> <span class="k">COLLATE</span> <span class="n">utf8_general_ci</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="n">PRIVILEGES</span> <span class="k">ON</span> <span class="n">observium</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">&#39;observium&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">&#39;password&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Observiumのコンフィグファイルにデータベース設定を反映します。
+Observiumのコンフィグファイルは、インストールディレクトリにあるデフォルトファイルをコピーして利用します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd observium
+cp config.php.default config.php
+vi config.php
+</pre></div>
+</div>
+<p><strong>config.php</strong> のデータベース設定をMySQLに設定した値に書き換えます。</p>
+<div class="highlight-php5"><div class="highlight"><pre><span></span><span class="x">// Database config --- This MUST be configured</span>
+<span class="x">$config[&#39;db_extension&#39;] = &#39;mysqli&#39;;</span>
+<span class="x">$config[&#39;db_host&#39;] = &#39;localhost&#39;;</span>
+<span class="x">$config[&#39;db_user&#39;] = &#39;observium&#39;;</span>
+<span class="x">$config[&#39;db_pass&#39;] = &#39;password&#39;;</span>
+<span class="x">$config[&#39;db_name&#39;] = &#39;observium&#39;;</span>
+</pre></div>
+</div>
+<p>Observiumのテーブルを作成します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>./discovery.php -u
+</pre></div>
+</div>
+</div>
+<div class="section" id="fping">
+<h2><a class="toc-backref" href="#id13">Fpingの設定</a><a class="headerlink" href="#fping" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ping監視用に <strong>fping</strong> の設定をします。</p>
+<p>fpingのパスを確認します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>which fping
+/sbin/fping
+</pre></div>
+</div>
+<p><strong>config.php</strong> にfpingの設定を追加します。
+fpingのパスは、利用環境に合わせてください。</p>
+<div class="highlight-php5"><div class="highlight"><pre><span></span><span class="x">$config[&#39;fping&#39;] = &quot;/sbin/fping&quot;;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selinux">
+<h2><a class="toc-backref" href="#id14">SELinuxの無効化</a><a class="headerlink" href="#selinux" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>SELinux</strong> を無効にします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>setenforce 0
+</pre></div>
+</div>
+<p>恒久的にSELinuxを無効にするために、SELinuxのコンフィグファイルを編集します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>vi /etc/selinux/config
+</pre></div>
+</div>
+<p>SELINUXオプションをpermissiveもしくはdisabledに設定します。
+ここではdisabledに設定してみます。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nv">SELINUX</span><span class="o">=</span>disabled
+</pre></div>
+</div>
+</div>
+<div class="section" id="rrd">
+<h2><a class="toc-backref" href="#id15">RRDディレクトリの作成</a><a class="headerlink" href="#rrd" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>RRDファイル</strong> を格納するディレクトリを作成します。
+デフォルトでは <strong>Observiumインストールディレクトリ/rrd</strong> にRRDファイルが作成されます。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>mkdir rrd
+chown apache:apache rrd
+</pre></div>
+</div>
+</div>
+<div class="section" id="apache">
+<h2><a class="toc-backref" href="#id16">Apacheの設定</a><a class="headerlink" href="#apache" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ObserviumのWeb画面を参照できるように、 <strong>Apache</strong> の設定を行います。
+Observiumのインストール場所など、利用環境に合わせて変更してください。</p>
+<div class="highlight-apache"><div class="highlight"><pre><span></span><span class="nt">&lt;VirtualHost</span> <span class="s">*:80</span><span class="nt">&gt;</span>
+
+  <span class="nb">DocumentRoot</span> <span class="sx">/opt/observium/html/</span>
+  <span class="nb">ServerName</span> example.com
+  <span class="nb">CustomLog</span> <span class="sx">/opt/observium/logs/access_log</span> combined
+  <span class="nb">ErrorLog</span> <span class="sx">/opt/observium/logs/error_log</span>
+
+  <span class="nt">&lt;Directory</span> <span class="s">&quot;/opt/observium/html/&quot;</span><span class="nt">&gt;</span>
+    <span class="nb">AllowOverride</span> <span class="k">All</span>
+    <span class="nb">Options</span> FollowSymLinks MultiViews
+    <span class="nb">Require</span> <span class="k">all</span> granted
+  <span class="nt">&lt;/Directory&gt;</span>
+
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id17">ログディレクトリの作成</a><a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Observiumのログ出力ディレクトリを作成します。
+デフォルトでは <strong>Observiumインストールディレクトリ/logs</strong> にログファイルが作成されます。</p>
+<p>Apacheから書込みできるように、ディレクトリのオーナーを変更しておきます。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>mkdir /opt/observium/logs
+chown apache:apache /opt/observium/logs
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id18">Observium管理ユーザの作成</a><a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Observiumの管理ユーザを作成します。
+Web管理画面からのユーザ追加もできますが、インストール直後はユーザが存在しないため、スクリプトを利用してユーザを追加します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd /opt/observium
+./adduser.php &lt;username&gt; &lt;password&gt; &lt;level&gt;
+</pre></div>
+</div>
+<p><strong>&lt;level&gt;</strong> にはユーザ権限レベルを指定します。
+管理ユーザのレベルは <strong>&#8220;10&#8221;</strong> です。
+ユーザレベルについては、 <a class="reference internal" href="userlevel.html"><span class="doc">ユーザーレベル</span></a> を参照してください。</p>
+<p>ユーザ名：admin　パスワード：password　の管理ユーザを追加する場合は、以下のようになります。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd /opt/observium
+./adduser.php admin password 10
+</pre></div>
+</div>
+</div>
+<div class="section" id="snmpd">
+<h2><a class="toc-backref" href="#id19">snmpdの設定</a><a class="headerlink" href="#snmpd" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>snmp</strong> でリソース情報を取得するため、 <strong>snmpd</strong> の設定を行います。</p>
+<p>Observiumインストールディレクトリに <strong>snmpd.conf.example</strong> ファイルがあります。
+今回はこのファイルの記述内容をそのまま利用します。</p>
+<p><strong>/etc/snmp/snmpd.conf</strong> ファイルに追記もしくは上書きします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>vi /etc/snmp/snmpd.conf
+</pre></div>
+</div>
+<p>コミュニティ名やローケーションなどは環境に応じて変更してください。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>com2sec readonly default 0bs3rv1um
+
+group MyROGroup v2c readonly
+view all included .1 80
+access MyROGroup &quot;&quot; any noauth exact all none none
+
+syslocation Rack, Room, Building, City, Country [GPSX,Y]
+syscontact Your Name &lt;your@email.address&gt;
+
+#Distro Detection
+extend .1.3.6.1.4.1.2021.7890.1 distro /usr/bin/distro
+</pre></div>
+</div>
+<p>設定例の最後の <strong>extend～</strong> は、デバイスのOSディストリビューション(Redhat, CentOS, Debianなど)に応じて、アイコン表示を変更するものです。
+Linuxの場合、デフォルトではタックス（ペンギン）のマークが表示されますが、 <strong>distro</strong> を設定するとディストリビューションに応じたアイコンが表示されます。</p>
+<p>distroを有効にするには、Observiumインストールディレクトリにあるdistroスクリプト(/opt/observium/scripts/distro)を利用します。
+このスクリプトを各デバイスの/usr/bin/にコピーすることで、デバイスのディストリビューションを取得することが可能になります。</p>
+<div class="admonition hint">
+<p class="first admonition-title">ヒント</p>
+<p class="last">スクリプトをコピーするパスとsnmpd.confに設定するパスがあっていれば、他のディレクトリに配置してもよい。</p>
+</div>
+<p>snmpdの設定を再読み込みします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>systemctl reload snmpd
+</pre></div>
+</div>
+<p>snmpdの再読み込み完了後、Observiumにデバイスの追加を行います。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>./add_device.php &lt;hostname&gt; &lt;community&gt; v2c
+</pre></div>
+</div>
+<p>hostnameには監視対象のホスト名、communityにはsnmpのコミュニティ名を指定します。</p>
+<p>デバイスの追加後、snmpによるデバイスディスカバリとポーリングの確認をします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>./discovery.php -h all
+./poller.php -h all
+</pre></div>
+</div>
+</div>
+<div class="section" id="cron">
+<h2><a class="toc-backref" href="#id20">cronの設定</a><a class="headerlink" href="#cron" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>デバイスのディスカバリとポーリングを自動で行うために、 <strong>cron</strong> に設定します。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>vi /etc/cron.d/observium
+</pre></div>
+</div>
+<p>cronに設定する時間や間隔は利用環境に合わせて変更してください。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>33 */6 * * * root /opt/observium/discovery.php -h all &gt;&gt; /dev/null 2&gt;&amp;1
+*/5 * * * * root /opt/observium/discovery.php -h new &gt;&gt; /dev/null 2&gt;&amp;1
+*/5 * * * * root /opt/observium/poller-wrapper.py 2 &gt;&gt; /dev/null 2&gt;&amp;1
+</pre></div>
+</div>
+<p><strong>crond</strong> の設定を再読み込みします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>systemctl reload crond
+</pre></div>
+</div>
+<p>以上で、Observiumの基本設定は完了です。
+ブラウザで管理画面にアクセスしてみてください。</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+スポンサーリンク
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ad001 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4504494943418731"
+     data-ad-slot="2836570009"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="unix_agent.html" class="btn btn-neutral float-right" title="Unix Agentをインストールする" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="apache.html" class="btn btn-neutral" title="Apachceのモニタリング" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, sumomo_99.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

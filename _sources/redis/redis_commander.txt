@@ -1,0 +1,46 @@
+Redis Commanderでホストが表示されないときの対応方法
+====================================================
+
+.. highlight:: none
+
+`Redis Commander <https://github.com/joeferner/redis-commander>`_ は **Redis** をGUIで管理できるツールです。
+Redis Commanderには接続対象のホスト名を登録できますが、登録されたホストが表示されなくなるときがあります。
+
+状況
+----
+
+Redis Commnderのプロセスが再起動したとき、接続できないRedisホストがあるとRedisホスト名が表示されなくなる場合があります。
+このとき、Redis Commanderの画面からのホスト追加もできなくなります。
+
+Redis CommanderではRedisホストへの接続エラーが出ています。
+以下の例では、IPアドレスが192.168.0.1のホストに接続できなくなったようです。
+
+::
+
+ Redis error Error: Redis connection to 192.168.0.1:6379 failed - getaddrinfo ENOTFOUND
+  at RedisClient.on_error (/usr/lib/node_modules/redis-commander/node_modules/redis/index.js:149:24)
+  at Socket.<anonymous> (/usr/lib/node_modules/redis-commander/node_modules/redis/index.js:83:14)
+  at Socket.emit (events.js:95:17)
+  at net.js:834:16
+  at process._tickCallback (node.js:442:13)[/code]
+
+対応方法
+--------
+
+Redis Commanderの設定ファイルから、接続できないホストを削除します。
+Redis Commanderの接続先を保存している設定ファイルは、 ``$HOME/.redis-commander`` です。
+
+::
+
+ vi $HOME/.redis-commander
+
+ {"sidebarWidth":"472","locked":"false","CLIHeight":"100","CLIOpen":"false","default_connections":[
+ {"label":"redis-002","host":"192.168.0.2","port":"6379","password":"","dbIndex":"0"},
+ {"label":"redis-001","host":"192.168.0.1","port":"6379","password":"","dbIndex":"0"}]}
+
+設定ファイルから接続できないホストを削除してください。
+例えば、IPアドレスが192.168.0.1のホストに接続できない場合は、以下の部分を削除します。
+
+ {"label":"redis-001","host":"192.168.0.1","port":"6379","password":"","dbIndex":"0"}
+
+設定ファイルのレコードが正常に接続できるホスト名だけになれば、Redis Commanderにホスト名が表示されるようになります。 

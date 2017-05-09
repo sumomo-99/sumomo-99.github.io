@@ -1,0 +1,336 @@
+CentOS 7 にObserviumをインストールする
+======================================
+
+.. highlight:: none
+
+サーバのリソース情報収集のために、 `Observium <http://www.observium.org/>`_ をインストールしてみました。
+Observiumは、 `MRTG <http://oss.oetiker.ch/mrtg/>`_ や `Cacti <http://www.cacti.net/>`_ のようなネットワークモニタリングツールです。
+
+ObserviumにはCommunity版とProfessional版の２つがあります。
+
++----------------------------------------------------+-----------+--------------+
+|                                                    | Community | Professional |
++====================================================+===========+==============+
+| ソフトウェアのリアルタイム更新およびバグフィックス | ×         | ○            |
++----------------------------------------------------+-----------+--------------+
+| 6ヶ月単位のソフトウェアリリース                    | ○         | ×            |
++----------------------------------------------------+-----------+--------------+
+| デバイスとメトリクスのオートディスカバリ           | ○         | ○            |
++----------------------------------------------------+-----------+--------------+
+| ディスカバリプロトコルによるネットワークマッピング | ○         | ○            |
++----------------------------------------------------+-----------+--------------+
+| 数百のデバイスの自動認識                           | ○         | ○            |
++----------------------------------------------------+-----------+--------------+
+| ルールベースによる自動グループ化                   | ×         | ○            |
++----------------------------------------------------+-----------+--------------+
+| 閾値とステータスによるアラートシステム             | ×         | ○            |
++----------------------------------------------------+-----------+--------------+
+| トラフィック課金の管理システム                     | ×         | ○            |
++----------------------------------------------------+-----------+--------------+
+| サポートサービス                                   | ×         | ○            |
++----------------------------------------------------+-----------+--------------+
+| 料金                                               | 無料      | 150ポンド/年 |
++----------------------------------------------------+-----------+--------------+
+
+今回はCommunity版のインストールをしてみます。
+
+公式ページの\ `インストール手順 <http://www.observium.org/docs/install_rhel7/>`_\ にしたがい、作業をしていきます。
+
+.. contents::
+   :local:
+   :depth: 1
+
+インストール環境
+----------------
+
+以下の環境にインストールします。
+
+======= =========
+OS      CentOS7.2
+PHP     7.0.5
+Apache  2.4.6
+MariaDB 10.1
+======= =========
+
+リポジトリの追加
+----------------
+
+**RPMforge** と **EPEL** リポジトリが追加されていない場合は、リポジトリの追加をします。
+
+::
+
+ rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt
+ rpm -Uvh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+ rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+ 
+
+パッケージの追加
+----------------
+
+Observiumに必要なパッケージをインストールします。
+
+::
+
+ yum install --enablerepo=remi,remi-php70,rpmforge,epel wget httpd php php-mysql php-gd \
+ php-posix php-mcrypt php-pear cronie net-snmp net-snmp-utils fping mariadb-server mariadb \
+ MySQL-python rrdtool subversion jwhois ipmitool graphviz ImageMagick
+
+この環境ではphp7を利用しているため、リポジトリにremi-php70を追加しています。
+利用するリポジトリは、インストールする環境に合わせて変更してください。
+
+Observiumのダウンロード
+-----------------------
+
+Observiumをインストールしたいディレクトリを作成します。
+ここでは公式の手順にしたがい、 **/opt/observium** にインストールすることにします。
+
+::
+
+ mkdir -p /opt/observium
+ cd /opt
+
+ディレクトリの作成後、ObserbiumのCommunity版をダウンロードして解凍します。
+
+::
+
+ wget http://www.observium.org/observium-community-latest.tar.gz
+ tar zxvf observium-community-latest.tar.gz
+ 
+MySQLの設定
+-----------
+
+Observium用のデータベースとユーザを設定します。
+データベース名やユーザ名は任意のものを設定できますが、ここでは以下の設定を利用します。
+
+============== ==========
+データベース名 observium
+ユーザ名       observium
+パスワード     password
+============== ==========
+
+.. code-block:: mysql
+
+ CREATE DATABASE observium DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+ GRANT ALL PRIVILEGES ON observium.* TO 'observium'@'localhost' IDENTIFIED BY 'password';
+
+Observiumのコンフィグファイルにデータベース設定を反映します。
+Observiumのコンフィグファイルは、インストールディレクトリにあるデフォルトファイルをコピーして利用します。
+
+::
+
+ cd observium
+ cp config.php.default config.php
+ vi config.php
+
+**config.php** のデータベース設定をMySQLに設定した値に書き換えます。
+
+.. code-block:: php5
+
+ // Database config --- This MUST be configured
+ $config['db_extension'] = 'mysqli';
+ $config['db_host'] = 'localhost';
+ $config['db_user'] = 'observium';
+ $config['db_pass'] = 'password';
+ $config['db_name'] = 'observium';
+
+Observiumのテーブルを作成します。
+
+::
+
+ ./discovery.php -u
+
+Fpingの設定
+-----------
+
+ping監視用に **fping** の設定をします。
+
+fpingのパスを確認します。
+
+::
+
+ which fping
+ /sbin/fping
+
+**config.php** にfpingの設定を追加します。
+fpingのパスは、利用環境に合わせてください。
+
+.. code-block:: php5
+
+ $config['fping'] = "/sbin/fping";
+ 
+SELinuxの無効化
+---------------
+
+**SELinux** を無効にします。
+
+::
+
+ setenforce 0
+
+恒久的にSELinuxを無効にするために、SELinuxのコンフィグファイルを編集します。
+
+::
+
+ vi /etc/selinux/config
+
+SELINUXオプションをpermissiveもしくはdisabledに設定します。
+ここではdisabledに設定してみます。
+
+.. code-block:: bash
+
+ SELINUX=disabled
+ 
+RRDディレクトリの作成
+---------------------
+
+**RRDファイル** を格納するディレクトリを作成します。
+デフォルトでは **Observiumインストールディレクトリ/rrd** にRRDファイルが作成されます。
+
+::
+
+ mkdir rrd
+ chown apache:apache rrd
+ 
+Apacheの設定
+------------
+
+ObserviumのWeb画面を参照できるように、 **Apache** の設定を行います。
+Observiumのインストール場所など、利用環境に合わせて変更してください。
+
+.. code-block:: apache
+
+ <VirtualHost *:80>
+
+   DocumentRoot /opt/observium/html/
+   ServerName example.com
+   CustomLog /opt/observium/logs/access_log combined
+   ErrorLog /opt/observium/logs/error_log
+
+   <Directory "/opt/observium/html/">
+     AllowOverride All
+     Options FollowSymLinks MultiViews
+     Require all granted
+   </Directory>
+
+ </VirtualHost>
+ 
+ログディレクトリの作成
+----------------------
+
+Observiumのログ出力ディレクトリを作成します。
+デフォルトでは **Observiumインストールディレクトリ/logs** にログファイルが作成されます。
+
+Apacheから書込みできるように、ディレクトリのオーナーを変更しておきます。
+
+::
+
+ mkdir /opt/observium/logs
+ chown apache:apache /opt/observium/logs
+ 
+Observium管理ユーザの作成
+-------------------------
+
+Observiumの管理ユーザを作成します。
+Web管理画面からのユーザ追加もできますが、インストール直後はユーザが存在しないため、スクリプトを利用してユーザを追加します。
+
+::
+
+ cd /opt/observium
+ ./adduser.php <username> <password> <level>
+
+**<level>** にはユーザ権限レベルを指定します。
+管理ユーザのレベルは **"10"** です。
+ユーザレベルについては、 :doc:`userlevel` を参照してください。
+
+ユーザ名：admin　パスワード：password　の管理ユーザを追加する場合は、以下のようになります。
+
+::
+
+ cd /opt/observium
+ ./adduser.php admin password 10
+ 
+snmpdの設定
+-----------
+
+**snmp** でリソース情報を取得するため、 **snmpd** の設定を行います。
+
+Observiumインストールディレクトリに **snmpd.conf.example** ファイルがあります。
+今回はこのファイルの記述内容をそのまま利用します。
+
+**/etc/snmp/snmpd.conf** ファイルに追記もしくは上書きします。
+
+::
+
+ vi /etc/snmp/snmpd.conf
+
+コミュニティ名やローケーションなどは環境に応じて変更してください。
+
+::
+
+ com2sec readonly default 0bs3rv1um
+ 
+ group MyROGroup v2c readonly
+ view all included .1 80
+ access MyROGroup "" any noauth exact all none none
+ 
+ syslocation Rack, Room, Building, City, Country [GPSX,Y]
+ syscontact Your Name <your@email.address>
+
+ #Distro Detection
+ extend .1.3.6.1.4.1.2021.7890.1 distro /usr/bin/distro
+
+設定例の最後の **extend～** は、デバイスのOSディストリビューション(Redhat, CentOS, Debianなど)に応じて、アイコン表示を変更するものです。
+Linuxの場合、デフォルトではタックス（ペンギン）のマークが表示されますが、 **distro** を設定するとディストリビューションに応じたアイコンが表示されます。
+
+distroを有効にするには、Observiumインストールディレクトリにあるdistroスクリプト(/opt/observium/scripts/distro)を利用します。
+このスクリプトを各デバイスの/usr/bin/にコピーすることで、デバイスのディストリビューションを取得することが可能になります。
+
+.. hint::
+   スクリプトをコピーするパスとsnmpd.confに設定するパスがあっていれば、他のディレクトリに配置してもよい。
+
+snmpdの設定を再読み込みします。
+
+::
+
+ systemctl reload snmpd
+
+snmpdの再読み込み完了後、Observiumにデバイスの追加を行います。
+
+::
+
+ ./add_device.php <hostname> <community> v2c
+
+hostnameには監視対象のホスト名、communityにはsnmpのコミュニティ名を指定します。
+
+デバイスの追加後、snmpによるデバイスディスカバリとポーリングの確認をします。
+
+::
+
+ ./discovery.php -h all
+ ./poller.php -h all
+
+cronの設定
+----------
+
+デバイスのディスカバリとポーリングを自動で行うために、 **cron** に設定します。
+
+::
+
+ vi /etc/cron.d/observium
+
+cronに設定する時間や間隔は利用環境に合わせて変更してください。
+
+::
+
+ 33 */6 * * * root /opt/observium/discovery.php -h all >> /dev/null 2>&1
+ */5 * * * * root /opt/observium/discovery.php -h new >> /dev/null 2>&1
+ */5 * * * * root /opt/observium/poller-wrapper.py 2 >> /dev/null 2>&1
+
+**crond** の設定を再読み込みします。
+
+::
+
+ systemctl reload crond
+
+以上で、Observiumの基本設定は完了です。
+ブラウザで管理画面にアクセスしてみてください。

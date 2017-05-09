@@ -1,0 +1,45 @@
+RDSのスナップショットを手動で取得するスクリプト
+=======================================================================
+
+**RDS** のスナップショットを手動で取得するrubyスクリプトです。
+スクリプトは以下のリンクで公開しています。
+
+https://github.com/sumomo-99/aws.git
+
+.. contents:: 目次
+   :depth: 1
+   :local:
+
+Install
+-------
+
+任意のディレクトリにスクリプトファイルを設置してください。
+**aws-sdk for ruby v2** が必要です。
+
+Usage
+-----
+
+スナップショットを取得するRDSの *DB Instance* と *Regin* を指定して実行してください。
+
+::
+
+ snapshot-rds.rb -c <DB-Instance> -r <REGION>
+
+デフォルトでは3世代分のスナップショットを残し、古いスナップショットはスクリプト中で削除しています。
+保存する世代数を変更する場合は、スクリプト中の **SNAP_NUM** の値を変更してください。
+
+Option
+------
+
+.. program:: snapshot-rds.rb
+
+.. option:: -c <DB-Instance>, --cluster <DB-Instance>
+
+   スナップショットを取得するRDSの **DB Instance** を指定します。
+   必須のオプションです。
+
+.. option:: -r <REGION>, --region <REGION>
+
+   スナップショットを取得するRDSの **Region** を指定します。 
+   指定しない場合は、デフォルトでap-northeast-1が設定されます。
+

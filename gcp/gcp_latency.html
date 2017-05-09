@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Google Compute Engineのネットワーク遅延 (レイテンシ) &mdash; Linux Tips 0.1 ドキュメント</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Linux Tips 0.1 ドキュメント" href="../index.html"/>
+        <link rel="up" title="GCP (Google Cloud Platform)" href="index.html"/>
+        <link rel="next" title="Googleの公開IPアドレス範囲を調べる" href="gcp_publicip.html"/>
+        <link rel="prev" title="GCP (Google Cloud Platform)" href="index.html"/>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75466879-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+
+          
+            <a href="../index.html" class="icon icon-home"> Linux Tips
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+<a href="https://twitter.com/sumomo_99" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sumomo_99</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<br>
+<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aws/index.html">AWS (Amazon Web Services)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">GCP (Google Cloud Platform)</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Google Compute Engineのネットワーク遅延 (レイテンシ)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gce-asia-east1-a-taiwan-ping">GCE (asia-east1-a: Taiwan)へのping結果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aws-ap-northeast-1a-tokyo-ping">AWS (ap-northeast-1a: Tokyo)へのping結果</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gcp_publicip.html">Googleの公開IPアドレス範囲を調べる</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../mysql/index.html">MySQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../redis/index.html">Redis (in-memory data structure store)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grafana/index.html">Grafana</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc-sphinx/index.html">Sphinx (Python Documentation Generator)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observium/index.html">Observium</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Linux Tips</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">GCP (Google Cloud Platform)</a> &raquo;</li>
+      
+    <li>Google Compute Engineのネットワーク遅延 (レイテンシ)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="google-compute-engine">
+<h1>Google Compute Engineのネットワーク遅延 (レイテンシ)<a class="headerlink" href="#google-compute-engine" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>GCE (Google Compute Engine)の <strong>asia-east1</strong> リージョンのネットワークレイテンシを確認してみました。
+<strong>asia-east1</strong> リージョンのデータセンタは <a class="reference external" href="https://www.google.com/about/datacenters/inside/locations/changhua-county/">台湾</a> にあります。</p>
+<div class="admonition tip">
+<p class="first admonition-title">ちなみに</p>
+<p class="last">先日、 <a class="reference external" href="https://cloudplatform.googleblog.com/2016/03/announcing-two-new-Cloud-Platform-Regions-and-10-more-to-come_22.html">GCP東京リージョン開設の発表</a> がありました。
+現在はベータ版の受付中です。</p>
+</div>
+<p>ネットワークレイテンシは、東京の回線から <strong class="command">ping</strong> コマンドの時間で計測します。
+結果は、 <strong>36ms</strong> ぐらいでした。</p>
+<div class="section" id="gce-asia-east1-a-taiwan-ping">
+<h2>GCE (asia-east1-a: Taiwan)へのping結果<a class="headerlink" href="#gce-asia-east1-a-taiwan-ping" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">&gt;</span>ping XXX.XXX.XXX.XXX
+
+<span class="go">XXX.XXX.XXX.XXX に ping を送信しています 32 バイトのデータ:</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44</span>
+
+<span class="go">XXX.XXX.XXX.XXX の ping 統計:</span>
+<span class="go">    パケット数: 送信 = 4、受信 = 4、損失 = 0 (0% の損失)、</span>
+<span class="go">ラウンド トリップの概算時間 (ミリ秒):</span>
+<span class="go">   最小 = 36ms、最大 = 36ms、平均 = 36ms</span>
+</pre></div>
+</div>
+<p>平均で <strong>36ms</strong> でした。</p>
+</div>
+<div class="section" id="aws-ap-northeast-1a-tokyo-ping">
+<h2>AWS (ap-northeast-1a: Tokyo)へのping結果<a class="headerlink" href="#aws-ap-northeast-1a-tokyo-ping" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>参考のためにAWS(Tokyo region)へのping結果です。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">&gt;</span>ping XXX.XXX.XXX.XXX
+
+<span class="go">XXX.XXX.XXX.XXX に ping を送信しています 32 バイトのデータ:</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =3ms TTL=52</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =4ms TTL=52</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =3ms TTL=52</span>
+<span class="go">XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =4ms TTL=52</span>
+
+<span class="go">XXX.XXX.XXX.XXX の ping 統計:</span>
+<span class="go">    パケット数: 送信 = 4、受信 = 4、損失 = 0 (0% の損失)、</span>
+<span class="go">ラウンド トリップの概算時間 (ミリ秒):</span>
+<span class="go">    最小 = 3ms、最大 = 4ms、平均 = 3ms</span>
+</pre></div>
+</div>
+<p>平均で <strong>3ms</strong> でした。
+やはり東京にデータセンタがあると速いですね。</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+スポンサーリンク
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ad001 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4504494943418731"
+     data-ad-slot="2836570009"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gcp_publicip.html" class="btn btn-neutral float-right" title="Googleの公開IPアドレス範囲を調べる" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="GCP (Google Cloud Platform)" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, sumomo_99.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

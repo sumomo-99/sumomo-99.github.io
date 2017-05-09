@@ -1,0 +1,58 @@
+Google Compute Engineのネットワーク遅延 (レイテンシ)
+=====================================================
+
+.. highlight:: console
+
+GCE (Google Compute Engine)の **asia-east1** リージョンのネットワークレイテンシを確認してみました。
+**asia-east1** リージョンのデータセンタは `台湾 <https://www.google.com/about/datacenters/inside/locations/changhua-county/>`_ にあります。
+
+.. tip::
+
+ 先日、 `GCP東京リージョン開設の発表 <https://cloudplatform.googleblog.com/2016/03/announcing-two-new-Cloud-Platform-Regions-and-10-more-to-come_22.html>`_ がありました。
+ 現在はベータ版の受付中です。
+
+ネットワークレイテンシは、東京の回線から :command:`ping` コマンドの時間で計測します。
+結果は、 **36ms** ぐらいでした。
+
+GCE (asia-east1-a: Taiwan)へのping結果
+--------------------------------------
+
+::
+
+ >ping XXX.XXX.XXX.XXX
+ 
+ XXX.XXX.XXX.XXX に ping を送信しています 32 バイトのデータ:
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =36ms TTL=44
+ 
+ XXX.XXX.XXX.XXX の ping 統計:
+     パケット数: 送信 = 4、受信 = 4、損失 = 0 (0% の損失)、
+ ラウンド トリップの概算時間 (ミリ秒):
+    最小 = 36ms、最大 = 36ms、平均 = 36ms
+
+平均で **36ms** でした。
+
+AWS (ap-northeast-1a: Tokyo)へのping結果
+----------------------------------------
+
+参考のためにAWS(Tokyo region)へのping結果です。
+
+::
+
+ >ping XXX.XXX.XXX.XXX
+ 
+ XXX.XXX.XXX.XXX に ping を送信しています 32 バイトのデータ:
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =3ms TTL=52
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =4ms TTL=52
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =3ms TTL=52
+ XXX.XXX.XXX.XXX からの応答: バイト数 =32 時間 =4ms TTL=52
+ 
+ XXX.XXX.XXX.XXX の ping 統計:
+     パケット数: 送信 = 4、受信 = 4、損失 = 0 (0% の損失)、
+ ラウンド トリップの概算時間 (ミリ秒):
+     最小 = 3ms、最大 = 4ms、平均 = 3ms
+
+平均で **3ms** でした。
+やはり東京にデータセンタがあると速いですね。

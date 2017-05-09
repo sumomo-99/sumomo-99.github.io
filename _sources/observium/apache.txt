@@ -1,0 +1,97 @@
+Apachceのモニタリング
+=====================
+
+**Observium** で **Apache** のモニタリングをしてみます。
+取得できるApacheリソース情報は、以下の通りです。
+
+* Traffic (bps)
+* Hits (Hits/sec)
+* CPU Utilisation (%)
+* Scoreboard Staticstics
+ 
+.. contents:: 目次
+   :local:
+   :depth: 1
+
+.. important::
+
+ ObserviumでApacheのモニタリングをするには、 **Unix Agent** の設定が必要です。
+ Unix Agentの設定は、:doc:`unix_agent` を参照してください。
+
+インストール環境
+----------------
+
+* OS：CentOS7.2
+* Apache：2.4
+
+事前準備
+--------
+
+Apacheのモニタリングスクリプトは **perl** スクリプトです。
+スクリプトを動かすために **LWP::Simle perl** モジュールが必要なので、監視対象サーバにインストールしておきます。
+
+::
+
+ yum install perl-libwww-perl
+
+Apacheの設定
+------------
+
+.. highlight:: apache
+
+**mod_status** を有効にしてApacheのステータスを取得できるようにします。
+``ExtendedStatus On`` で詳細情報を取得できるようにする必要があります。
+
+::
+
+ vi /etc/httpd/conf/httpd.conf
+
+::
+
+ ExtendedStatus On
+
+ <Location /server-status>
+   SetHandler server-status
+   Require ip 127.0.0.1 ::1
+ </Location>
+ 
+設定を反映させます。
+
+.. highlight:: none
+
+::
+
+ systemctl reload httpd
+
+Apacheのステータスが取得できるか確認します。
+
+::
+
+ curl http://localhost/server-status
+
+Apacheモニタリングスクリプトの配置
+----------------------------------
+
+Apacheモニタリングスクリプトを監視対象サーバにインストールします。
+ApacheモニタリングスクリプトはObserviumインストールディレクトリにあります。
+
+::
+
+ /opt/observium/scripts/agent-local/apache
+
+このスクリプトを監視対象サーバの **Unix Agent localディレクトリ** に置きます。
+Observiumサーバから監視対象サーバへスクリプトをコピーします。
+
+::
+
+ scp /opt/observium/scripts/aget-local/apache <監視対象サーバ>:/tmp
+ 
+監視対象サーバでスクリプトをUnix Agent localディレクトリへ移します。
+利用環境に合わせてlocalディレクトリのパスは変更してください。
+
+::
+
+ sudo mv /tmp/apache /usr/local/lib/observium_agent/local
+ 
+以上で設定は完了です。
+Web画面で :menuselection:`Apps --> Apache` のグラフが表示されれば成功です。

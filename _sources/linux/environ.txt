@@ -1,0 +1,66 @@
+プロセスを実行した時の環境変数を知りたい
+=======================================================
+
+.. highlight:: console
+
+`Qiitaに投稿した記事 <http://qiita.com/sumomo_99/items/d038d18b86f7050650e9>`_ の補足版です。
+
+プロセスを実行した時の環境変数を知る
+------------------------------------
+
+Linuxでプロセスを実行したときの環境変数を知りたい場合は、 :file:`/proc/[pid]/environ` ファイルで確認できます。
+*[pid]* を、対象プロセスのプロセスIDに置き換えてください。
+
+このファイルは各項目が **NULL** で区切られているので、 :command:`cat` などで表示しても見にくいです。
+
+catコマンドでenvironファイルを確認した例::
+
+ # cat /proc/18458/environ
+ LANG=CPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/binNOTIFY_SOCKET=/run/systemd/notify
+
+このように表示結果が1行で表示されてしまうため、非常にわかりづらい結果表示となります。
+
+出力結果を見やすくする
+----------------------
+
+出力結果を見やすくする方法を紹介します。
+以下のコマンドで見やすくすることができます。
+
+.. contents::
+   :local:
+   :depth: 1
+
+stringsを使う 
+^^^^^^^^^^^^^
+
+:command:`strings` コマンドは、バイナリフィアルや得体のしれないファイルから文字列を拾ってくれます。
+何のファイルかの見当をつけるのにも使えます。
+
+::
+
+ strings /proc/[pid]/environ
+
+:command:`strings` コマンドで整形した例::
+
+ # strings /proc/18458/environ
+ LANG=C
+ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+ NOTIFY_SOCKET=/run/systemd/notify
+ 
+
+trを使う
+^^^^^^^^
+
+:command:`tr` コマンドでNULLコードを改行コードに変換します。
+
+::
+
+ cat /proc/[pid]/environ | tr "\000" "\n"
+
+:command:`tr` コマンドで整形した例::
+
+ # cat /proc/18458/environ | tr "\000" "\n"
+ LANG=C
+ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+ NOTIFY_SOCKET=/run/systemd/notify
+

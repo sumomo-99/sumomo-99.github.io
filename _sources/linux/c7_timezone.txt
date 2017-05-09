@@ -1,0 +1,55 @@
+[CentOS 7] タイムゾーンを設定する
+=================================
+
+.. highlight:: console
+
+CentOS7でタイムゾーンを設定するには、 :command:`timedatectl` コマンドを利用します。
+
+.. contents:: 設定手順
+   :local:
+   :depth: 2
+
+現在の日時設定を確認する
+-------------------------
+
+:command:`timedatectl status`
+
+実行例::
+
+ # timedatectl status
+       Local time: Fri 2016-03-18 16:37:35 JST
+   Universal time: Fri 2016-03-18 07:37:35 UTC
+         RTC time: Fri 2016-03-18 07:37:35
+        Time zone: Asia/Tokyo (JST, +0900)
+      NTP enabled: yes
+ NTP synchronized: yes
+  RTC in local TZ: no
+       DST active: n/a
+
+タイムゾーンの一覧を表示する
+-----------------------------
+
+:command:`timedatectl list-timezones`
+
+実行例::
+
+ # timedatectl list-timezones
+ Africa/Abidjan
+ Africa/Accra
+ Africa/Addis_Ababa
+ Africa/Algiers
+ Africa/Asmara
+ Africa/Bamako
+ Africa/Bangui
+ :
+ :
+
+タイムゾーンを設定する
+----------------------
+
+:command:`timedatectl set-timezone [TIMEZONE]`
+
+実行例::
+
+ # timedatectl set-timezone Asia/Tokyo
+ 

@@ -1,0 +1,62 @@
+[CentOS 7] systemdのログレベルを変更する
+=========================================
+
+.. highlight:: console
+
+**systemd** のログレベルは、デフォルトで **info** レベルになっています。
+ログレベルを確認、変更する方法です。
+
+.. contents::
+   :local:
+   :depth: 2 
+
+現在のログレベルを確認する
+--------------------------
+
+現在設定されている **systemd** のログレベルを確認するには、 :command:`systemctl` コマンドの **show** コマンドを利用します。
+
+※-pオプションで'LogLevel'パラメータを指定する。
+
+::
+
+ $ systemctl -pLogLevel show
+ LogLevel=info
+
+ログレベルを一時的に変更する
+----------------------------
+
+**systemd** のログレベルを一時的に変更するには、 :command:`systemd-analyze` コマンドの **set-log-level** オプションを利用します。
+
+ログレベルをnoticeに変更する例です。
+
+::
+
+ $ sudo systemd-analyze set-log-level notice
+ $
+ $ systemctl -pLogLevel show
+ LogLevel=notice
+
+ログレベルを恒久的に変更する
+----------------------------
+
+システムの再起動後も変更したログレベルを有効にするには、 :file:`/etc/systemd/system.conf` の **LogLevel** を変更します。
+
+ログレベルをnoticeに変更する例です。
+
+::
+
+ $ sudo vi /etc/systemd/system.conf
+
+ [Manager]
+ #LogLevel=info
+ LogLevel=notice
+ 
+設定フィルの修正後は、システムの再起動またはsystemdマネージャの再起動が必要です。
+
+::
+
+ $ #システム再起動で反映させる。
+ $ sudo reboot
+ 
+ $ #systemdの再起動でも反映される。
+ $ sudo systemctl daemon-reexec 

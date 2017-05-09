@@ -1,0 +1,82 @@
+[tar] tarコマンドの小技
+========================
+
+.. highlight:: console
+
+.. note::
+ 以前、\ `Qiitaに投稿した記事 <http://qiita.com/sumomo_99/items/0cf26faf9cb194086c0a>`_\ の改訂版になります。
+
+.. contents:: 目次
+   :local:
+   :depth: 2
+
+tarファイルのサイズをざっくり見積もる
+-------------------------------------
+
+tarファイルの作成前にtarファイルのサイズ見積もりができます。
+
+::
+
+ $ tar cf - /path/to/archive/ | wc -c
+
+ハイフン(-)で標準出力に出力します。
+これをwcの-cオプションでバイトカウントすることで、tarファイルのサイズを取得します。
+ 
+tar.gzファイルのサイズを見積もる
+--------------------------------
+
+gzで圧縮する場合のサイズを見積もる方法です。
+
+::
+
+ $ tar czf - /path/to/archive/ | wc -c
+  
+カレントディレクトリとtarファイルの中身を比較する
+-------------------------------------------------
+
+tarのdオプションで、ディレクトリとtarファイルの中身の比較を行うことができます
+
+::
+
+ $ tar dfz archive.tar.gz
+
+実行例::
+
+ $ mkdir test
+ $ touch test/test.{1..3}
+ $ tar cfz test.tar.gz test
+ $ tar dfz test.tar.gz        #変更がないのでなにも返らない
+ $ echo hoge > test/test.1    #test.1を変更する
+ $ tar dfz test.tar.gz        #変更箇所が表示される
+ test/test.1: Mod time differs
+ test/test.1: Size differs
+ 
+特定のディレクトリ、ファイルだけ展開する
+----------------------------------------
+
+ディレクトリもしくはファイル名を指定することで、特定のディレクトリやファイルのみを展開することができます。
+
+::
+
+ $ tar xvf archive.tar path/to/directory/
+ $ tar xvf archive.tar path/to/file
+ 
+tarファイルの中身を確認する
+---------------------------
+
+tarファイルの中身をファイル展開しないで確認する方法を2つ紹介します。
+
+tarの t オプションを利用する方法
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+ $ tar tvf archive.tar.gz
+
+lessコマンドを利用する方法
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+ $ less archive.tar.gz
+ 

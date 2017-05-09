@@ -1,0 +1,63 @@
+[uptime] システムの稼働時間を調べる
+====================================
+
+.. highlight:: console
+
+システムの稼働時間
+------------------
+
+システム(OS)の稼働時間を調べるには、 :command:`uptime` コマンドを利用します。
+
+uptimeコマンドの実行例::
+
+ $ uptime
+  15:32:42 up 2 days,  4:04,  2 users,  load average: 0.00, 0.02, 0.05
+
+表示結果は左から、以下の値を示しています。
+
+* 現在時刻
+* システムの稼働時間
+* ログインしているユーザ数
+* ロードアベレージ(1分, 5分, 15分)
+
+:command:`w` コマンドや :command:`top` コマンドでも確認できます。
+表示される結果は、 :command:`uptime` コマンドと同じものになります。
+
+wコマンドの実行例::
+
+ $ w
+  15:35:43 up 2 days,  4:07,  2 users,  load average: 0.02, 0.03, 0.05
+ USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+ :
+ :
+ 
+topコマンドの実行例::
+
+ $ top -n 1
+ 
+ top - 15:38:24 up 2 days,  4:10,  2 users,  load average: 0.00, 0.02, 0.05
+ Tasks: 156 total,   2 running, 154 sleeping,   0 stopped,   0 zombie
+ :
+ :
+
+:command:`top` コマンドの :option:`-n` オプションは結果表示を1回だけにするためにつけています。
+このオプションをつけなくても、システムの稼働時間は表示されます。
+
+.. option:: -n <num>
+
+   topコマンドの表示を繰り返す最大値を指定します。
+ 
+システムの起動日時
+------------------
+
+システムがいつから起動しているか(起動日時)を調べるには、 :command:`uptime` コマンドの :option:`-s` オプションを利用します。
+
+uptimeコマンドの実行例::
+
+ $ uptime -s
+ 2016-03-22 11:28:04
+ 
+.. option:: -s, --since 
+
+   システムがいつから起動しているかを、yyyy-mm-dd HH:MM:SS形式で表示します。
+

@@ -1,0 +1,39 @@
+ユーザーの一覧を取得する
+========================
+
+.. highlight:: console
+
+Linuxユーザの一覧は、 **/etc/passwd** ファイルをみることで確認できます。
+テキストファイルなので、 :command:`cat` コマンドなどで確認します。
+
+::
+
+ $ cat /etc/passwd
+ root:x:0:0:root:/root:/bin/bash
+ bin:x:1:1:bin:/bin:/sbin/nologin
+ daemon:x:2:2:daemon:/sbin:/sbin/nologin
+ adm:x:3:4:adm:/var/adm:/sbin/nologin
+ lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+
+ユーザ名だけ取得したい場合は、 :command:`awk` コマンドなどで切り出します。
+
+::
+
+ $ cat /etc/passwd | awk -F: '{print $1}'
+ root
+ bin
+ daemon
+ adm
+ lp
+ 
+:command:`getent` コマンドでも同じ情報を取得することができます。
+
+::
+
+ $ getent passwd
+ root:x:0:0:root:/root:/bin/bash
+ bin:x:1:1:bin:/bin:/sbin/nologin
+ daemon:x:2:2:daemon:/sbin:/sbin/nologin
+ adm:x:3:4:adm:/var/adm:/sbin/nologin
+ lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+

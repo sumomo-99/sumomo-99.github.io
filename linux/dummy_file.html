@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>[touch, dd, head] ダミーファイルを作る &mdash; Linux Tips 0.1 ドキュメント</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Linux Tips 0.1 ドキュメント" href="../index.html"/>
+        <link rel="up" title="Linux" href="index.html"/>
+        <link rel="next" title="[strings, tr] プロセスを実行した時の環境変数を知りたい" href="environ.html"/>
+        <link rel="prev" title="[dig] DNSのTXTレコードを参照する" href="dig_txt.html"/>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75466879-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+
+          
+            <a href="../index.html" class="icon icon-home"> Linux Tips
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+<a href="https://twitter.com/sumomo_99" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sumomo_99</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<br>
+<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Linux</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="asciiquarium.html">魚を鑑賞する方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bash_2048.html">[bash] bashで2048ゲーム</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7_dig.html">[CentOS 7] dig, host, nslookup, nsupdateコマンドをインストールする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7_systemd.html">[CentOS 7] systemdのログレベルを変更する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7_timezone.html">[CentOS 7] タイムゾーンを設定する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_search.html">[bash] 過去に実行したコマンドを検索する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dig_txt.html">[dig] DNSのTXTレコードを参照する</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">[touch, dd, head] ダミーファイルを作る</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">空のファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#null">nullのファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">ランダなバイナリファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ascii">可視化できるASCII形式ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="environ.html">[strings, tr] プロセスを実行した時の環境変数を知りたい</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file_num.html">カレントディレクトリ以下のファイル数を調べる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kipmi0.html">kipmi0プロセスのCPU使用率が100%になる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="letsencrypt.html">Let&#8217;s Encryptのコンパイルでエラーがでる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nload.html">[nload] nloadでネットワークモニタリング</a></li>
+<li class="toctree-l2"><a class="reference internal" href="passwd.html">ユーザーの一覧を取得する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps_lstart.html">[ps] プロセスの起動日時を調べる方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">[pwd] pwdコマンドで物理パスを表示させる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="swap.html">swapを利用しているプロセスを調べる方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tar.html">[tar] tarコマンドの小技</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uptime.html">[uptime] システムの稼働時間を調べる</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../aws/index.html">AWS (Amazon Web Services)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcp/index.html">GCP (Google Cloud Platform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mysql/index.html">MySQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../redis/index.html">Redis (in-memory data structure store)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grafana/index.html">Grafana</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc-sphinx/index.html">Sphinx (Python Documentation Generator)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observium/index.html">Observium</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Linux Tips</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Linux</a> &raquo;</li>
+      
+    <li>[touch, dd, head] ダミーファイルを作る</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="touch-dd-head">
+<h1>[touch, dd, head] ダミーファイルを作る<a class="headerlink" href="#touch-dd-head" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>テストなどである程度のファイルサイズのあるダミーファイルが必要になる場合があります。
+ダミーファイルの作り方を４つ紹介します。</p>
+<div class="contents local topic" id="id1">
+<p class="topic-title first">ダミーファイルの作り方</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id4">空のファイル</a></li>
+<li><a class="reference internal" href="#null" id="id5">nullのファイル</a></li>
+<li><a class="reference internal" href="#id3" id="id6">ランダなバイナリファイル</a></li>
+<li><a class="reference internal" href="#ascii" id="id7">可視化できるASCII形式ファイル</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id4">空のファイル</a><a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>空 (ファイルサイズがゼロ)のファイルは、 <strong class="command">touch</strong> コマンドで作成できます。</p>
+<p>empty.datという空のダミーファイルを作ります。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> touch empty.dat
+</pre></div>
+</div>
+<p><strong class="command">file</strong> コマンドで作ったファイルを確認してみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> file empty.dat
+<span class="go">empty.dat: empty</span>
+</pre></div>
+</div>
+<p>empty.datファイルはempty(空)ファイルのようです。</p>
+</div>
+<div class="section" id="null">
+<h2><a class="toc-backref" href="#id5">nullのファイル</a><a class="headerlink" href="#null" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>NUL</strong> で埋めたファイルは、 <strong class="command">dd</strong> コマンドで作成できます。</p>
+<p>サイズが10MBのNULで埋められたファイルを作ります。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>null.dat <span class="nv">count</span><span class="o">=</span><span class="m">10</span> <span class="nv">bs</span><span class="o">=</span>1M
+<span class="go">10+0 レコード入力</span>
+<span class="go">10+0 レコード出力</span>
+<span class="go">10485760 バイト (10 MB) コピーされました、 0.0108068 秒、 970 MB/秒</span>
+</pre></div>
+</div>
+<p><strong class="command">hexdump</strong> コマンドで作ったファイルを確認してみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> hexdump -C null.dat
+<span class="go">00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|</span>
+<span class="go">*</span>
+<span class="go">00a00000</span>
+</pre></div>
+</div>
+<p>null.datファイルはNUL(0x00)で埋められているようです。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id6">ランダなバイナリファイル</a><a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ランダムなバイナリファイルは、 <strong class="command">head</strong> コマンドと <strong>/dev/urandom</strong> デバイスを組み合わせることで作成できます。</p>
+<p>サイズが10MBのランダムなバイナリファイルを作ります。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> head -c 10m /dev/urandom &gt; random.dat
+</pre></div>
+</div>
+<p><strong class="command">hexdump</strong> コマンドで作ったファイルを確認してみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> hexdump -C random.dat <span class="p">|</span> head
+<span class="go">00000000  91 46 d3 91 07 22 8e 69  58 d2 b6 e2 df c1 fa 95  |.F...&quot;.iX.......|</span>
+<span class="go">00000010  42 bb 2d 11 dd a0 c3 50  9a 54 a4 0d 53 7a 12 09  |B.-....P.T..Sz..|</span>
+<span class="go">00000020  ea f7 e8 d6 41 b0 61 ac  23 58 b3 9d 2d 60 b5 23  |....A.a.#X..-`.#|</span>
+<span class="go">00000030  9c 3b 08 fc 4e 97 46 88  70 db d4 2c 03 ef 6b 6c  |.;..N.F.p..,..kl|</span>
+<span class="go">00000040  78 c3 cc 30 53 03 b5 30  9b 14 0e 2e 4b 18 87 5c  |x..0S..0....K..\|</span>
+<span class="go">00000050  aa 04 c7 39 67 d9 54 e7  7e 33 b6 1f 2a 25 6a 9d  |...9g.T.~3..*%j.|</span>
+<span class="go">00000060  e8 ce f3 57 ad a1 d4 0a  db df f9 7e 1f 35 b7 7e  |...W.......~.5.~|</span>
+<span class="go">00000070  ab d6 04 1a 14 a4 fe 18  8b ba cd 06 6f cc f9 01  |............o...|</span>
+<span class="go">00000080  2f f1 6d 32 91 6a 04 ea  55 e2 f5 5a d5 1f f7 fe  |/.m2.j..U..Z....|</span>
+<span class="go">00000090  59 66 aa 78 5c 3e d1 e0  b3 88 72 51 dd 3c 9f ae  |Yf.x\&gt;....rQ.&lt;..|</span>
+</pre></div>
+</div>
+<p><strong class="command">file</strong> コマンドでも確認してみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> file random.dat
+<span class="go">random.dat: data</span>
+</pre></div>
+</div>
+<p>random.datファイルはバイナリファイルと認識されているようです。</p>
+</div>
+<div class="section" id="ascii">
+<h2><a class="toc-backref" href="#id7">可視化できるASCII形式ファイル</a><a class="headerlink" href="#ascii" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>可視化できるb <strong>ASCII</strong> 形式ファイルは、ランダムなバイナリファイルを <strong>base64</strong> でエンコードすることで作成できます。</p>
+<p>サイズが10MBのASCII形式ファイルを作ってみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> head -c 10m /dev/urandom <span class="p">|</span> base64 &gt; random.txt
+</pre></div>
+</div>
+<p><strong class="command">head</strong> コマンドで確認をしてみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> head random.txt
+<span class="go">fSXw/u7mtGi4mO5r/lOFcUNlWvhDcJ83/FzoqQPt9skn5/ztFiHKMEZ8o6f5K/TdO9fe8KN4sWd5</span>
+<span class="go">GwqGMEeLV6PMK8ryemGY58FZwl99zRr/Vp9GrqKzP45JO8rIZ/Negy/inOTNhHWM77Oj3fUqyCVD</span>
+<span class="go">YifzrtKt22e75LNdpnksEOI0fYrmJ74dDSqMkh4PylGXGubwxsvgH48WRB410hGHhFun7zC++1SW</span>
+<span class="go">+kA3lXRaQ0iOyJWadhkFHLyaidv8SX93o7Ku+jf6umoChyZb3HQxHthxaAY6ltncR5DIFK7WJaes</span>
+<span class="go">q9CYCinsNctvWsj5G10eV7oukfjPI0L8G7KBE5Yg0388F6+M53SXCxNPZK+SnmdiUmwTWHc70/rh</span>
+<span class="go">9thcSG2mEdPJgx+ygQNqgIUXlhU/v1PpsKBsF3d840Ku5T5LzSCizJBmYFLUjmUSU16m9jLDetnK</span>
+<span class="go">qEZP4K75UARWJNU/5fhICMeDzGdpniqiyEIvRpmSfIOAP7f7N9w6wBf8XY2qlgavSyONQeOP3Vk1</span>
+<span class="go">mbey9jm/ywqQ7hzPJ4InBV1kpErRu0+B0rsJnHNtYejlkVvHCk+YHXfasbKNDmkHrZxyjm4fHAYh</span>
+<span class="go">MPJe3Iz+Q1yY4lbmb5k199ayRoQrHJmQYdlZIi7uwPXxDgREQhhKiwkDExJZjkvvcCgPEJ2Aq3V/</span>
+<span class="go">JsIxwjD6bcjqbynoJkPaYAdjfmSOEL7XrOLfGYxKOp6/W1WKoZmvNjOkphLNju79urF8BLq6Rvjj</span>
+</pre></div>
+</div>
+<p><strong class="command">file</strong> コマンドでも確認してみます。</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> file random.txt
+<span class="go">random.txt: ASCII text</span>
+</pre></div>
+</div>
+<p>random.txtファイルはASCIIテキストファイルとして認識されているようです。</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+スポンサーリンク
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ad001 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4504494943418731"
+     data-ad-slot="2836570009"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="environ.html" class="btn btn-neutral float-right" title="[strings, tr] プロセスを実行した時の環境変数を知りたい" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dig_txt.html" class="btn btn-neutral" title="[dig] DNSのTXTレコードを参照する" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, sumomo_99.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

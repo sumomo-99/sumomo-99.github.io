@@ -1,0 +1,38 @@
+swapを利用しているプロセスを調べる方法
+======================================
+
+.. highlight:: console
+
+Swapを利用しているプロセスを調べる方法です。
+:file:`proc` ファイルシステムの :file:`status` ファイルを参照することで、プロセスのswap利用状況を確認することができます。
+
+想定される使いどころ
+ * swap領域が不足した原因を調べたいとき。
+ * 取り急ぎswapを消費しているプロセスを停止もしくは再起動をしたいとき。
+
+.. attention::
+
+ Kernel 2.6.34以降に対応していますが、RHEL6、CentOS6でもこの方法で調べることができます。
+
+::
+
+ $ sudo grep VmSwap /proc/*/status
+ /proc/30167/status:VmSwap: 0 kB
+ /proc/326/status:VmSwap: 160 kB
+ /proc/437/status:VmSwap: 2936 kB
+ /proc/441/status:VmSwap: 136 kB
+ /proc/461/status:VmSwap: 112 kB
+ /proc/467/status:VmSwap: 112 kB
+ /proc/468/status:VmSwap: 116 kB
+ /proc/479/status:VmSwap: 88 kB
+ /proc/486/status:VmSwap: 7056 kB
+ /proc/814/status:VmSwap: 952 kB
+ /proc/816/status:VmSwap: 948 kB
+
+freeコマンドの結果::
+
+ $ free
+ total used free shared buff/cache available
+ Mem: 2050052 53732 1547952 106588 448368 1718752
+ Swap: 4198396 12776 4185620
+ 

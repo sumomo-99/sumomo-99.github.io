@@ -1,0 +1,86 @@
+Googleの公開IPアドレス範囲を調べる
+========================================
+
+.. highlight:: console
+
+メールやsshの通信を設定するために、Googleが利用するIPアドレスの範囲を知りたい場合があります。
+Googleが利用するIPアドレスの範囲は、\ **DNSのSPFレコード**\ を調べることで取得できます。
+
+.. contents:: 手順
+   :local:
+   :depth: 2
+
+_spf.google.comドメインのSPFレコードを取得する
+----------------------------------------------
+
+:command:`dig` コマンドを使って、 **_spf.google.com** ドメインのSPFレコードを取得します。
+
+::
+
+ $ dig -t txt _spf.google.com
+ 
+ ; <<>> DiG 9.9.4-RedHat-9.9.4-29.el7_2.3 <<>> -t txt _spf.google.com
+ (省略)
+ ;; QUESTION SECTION:
+ ;_spf.google.com.               IN      TXT
+ 
+ ;; ANSWER SECTION:
+ _spf.google.com.        299     IN      TXT     "v=spf1 include:_netblocks.google.com include:_netblocks2.google.com include:_netblocks3.google.com ~all"
+ (省略)
+
+3つのドメイン名が取得できました。
+
+* _netblocks.google.com
+* _netblocks2.google.com
+* _netblocks3.google.com
+
+取得できたドメイン名から、IPアドレス範囲を取得します。
+
+取得したレコードに含まれているドメイン名から、IPアドレス範囲を取得する
+----------------------------------------------------------------------
+
+:command:`dig` コマンドでIPアドレス範囲を取得します。
+ここで取得できたアドレスがGoogleの公開IPアドレスになります。
+
+::
+
+ $ dig -t txt _netblocks.google.com
+ 
+ ; <<>> DiG 9.9.4-RedHat-9.9.4-29.el7_2.3 <<>> -t txt _netblocks.google.com
+ (省略)
+ ;; QUESTION SECTION:
+ ;_netblocks.google.com. IN TXT
+ 
+ ;; ANSWER SECTION:
+ _netblocks.google.com. 2441 IN TXT "v=spf1 ip4:64.18.0.0/20 ip4:64.233.160.0/19 ip4:66.102.0.0/20 ip4:66.249.80.0/20 ip4:72.14.192.0/18 ip4:74.125.0.0/16 ip4:108.177.8.0/21 ip4:173.194.0.0/16 ip4:207.126.144.0/20 ip4:209.85.128.0/17 ip4:216.58.192.0/19 ip4:216.239.32.0/19 ~all"
+ (省略)
+
+::
+
+ $ dig -t txt _netblocks2.google.com
+ 
+ ; <<>> DiG 9.9.4-RedHat-9.9.4-29.el7_2.3 <<>> -t txt _netblocks2.google.com
+ (省略)
+ ;; QUESTION SECTION:
+ ;_netblocks2.google.com. IN TXT
+ 
+ ;; ANSWER SECTION:
+ _netblocks2.google.com. 3599 IN TXT "v=spf1 ip6:2001:4860:4000::/36 ip6:2404:6800:4000::/36 ip6:2607:f8b0:4000::/36 ip6:2800:3f0:4000::/36 ip6:2a00:1450:4000::/36 ip6:2c0f:fb50:4000::/36 ~all"
+ (省略)
+ 
+::
+
+ $ dig -t txt _netblocks3.google.com
+ 
+ ; <<>> DiG 9.9.4-RedHat-9.9.4-29.el7_2.3 <<>> -t txt _netblocks3.google.com
+ (省略)
+ ;; QUESTION SECTION:
+ ;_netblocks3.google.com. IN TXT
+ 
+ ;; ANSWER SECTION:
+ _netblocks3.google.com. 3599 IN TXT "v=spf1 ip4:172.217.0.0/19 ~all"
+ (省略)
+ 
+.. seealso::
+ Google IP アドレスの範囲の調べ方は、以下の公式サイトで紹介されています。
+ <https://support.google.com/a/answer/60764>

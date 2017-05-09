@@ -1,0 +1,32 @@
+[ps] プロセスの起動日時を調べる方法
+===================================
+
+.. highlight:: console
+
+プロセスが起動された日時は、 :command:`ps` コマンドで調べることができます。
+ただし、通常のフォーマット (ps -efやps auxなど)では、プロセスの起動が24時間を超えると時間が表示されなくなります。
+
+この場合、psコマンドの **-o** オプションで **lstart** を指定することで、起動日時を表示させることができます。
+
+通常フォーマットの例::
+
+ $ ps -ef | head -5
+ UID PID PPID C STIME TTY TIME CMD
+ root 1 0 0 Mar22 ? 00:01:19 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+ root 2 0 0 Mar22 ? 00:00:00 [kthreadd]
+ root 3 2 0 Mar22 ? 00:00:02 [ksoftirqd/0]
+ root 7 2 0 Mar22 ? 00:00:41 [rcu_sched]
+
+*STIME* の列に時間が表示されていません。
+ 
+フォーマットにlstartを指定した例::
+
+ $ ps -eo user,pid,ppid,c,lstart,tty,time,cmd | head -5
+ USER PID PPID C STARTED TT TIME CMD
+ root 1 0 0 Tue Mar 22 11:28:03 2016 ? 00:01:19 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+ root 2 0 0 Tue Mar 22 11:28:03 2016 ? 00:00:00 [kthreadd]
+ root 3 2 0 Tue Mar 22 11:28:03 2016 ? 00:00:02 [ksoftirqd/0]
+ root 7 2 0 Tue Mar 22 11:28:03 2016 ? 00:00:41 [rcu_sched]
+ 
+*STARTED* の列に開始日時が表示されています。
+

@@ -1,0 +1,12 @@
+Observium
+++++++++++++++++++++++++++
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   *
+
+リンク
+
+Observium公式ページ http://www.observium.org/

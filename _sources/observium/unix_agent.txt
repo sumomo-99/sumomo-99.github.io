@@ -1,0 +1,141 @@
+Unix Agentをインストールする
+========================================
+
+.. highlight:: none
+
+``Observium`` は **SNMP** でリソースデータの取得を行います。
+SNMPに対応していないリソースデータを取得するには、 ``Unix Agent`` を監視対象サーバに設定する必要があります。
+Unix Agentのインストールと設定をしてみました。
+
+.. contents::
+   :local:
+   :depth: 1 
+
+インストール環境
+----------------
+
+CentOS7.2
+
+Observiumは **/opt/observium** にインストールされているものとします。
+Observiumのインストール方法は、 :doc:`install` を参照してください。
+
+xinetdのインストール
+--------------------
+
+ObserviumのUnix Agentは **xinetd** 経由で動作します。
+はじめに監視対象サーバにxinetdのインストールを行います。
+
+::
+
+ yum install xinetd
+
+xinetdの自動起動を有効にしておきます。
+
+::
+
+ systemctl enable xinetd
+
+xinetdの設定
+------------
+
+Observiumインストールディレクトリにあるxinetd設定ファイル **(observium_agent_xinetd)** を、監視対象サーバにコピーします。
+Observiumサーバにログインし、ファイルを転送してください。
+
+::
+
+ scp /opt/observium/scripts/observium_agent_xinetd <監視対象サーバ>:/tmp
+
+監視対象サーバにログインし、 **xinetd.d** へファイルを移動します。
+
+::
+
+ sudo mv /tmp/observium_agent_xinetd /etc/xinetd.d
+
+**observium_agent_xinetd** を編集します。
+
+::
+
+ vi /etc/xinetd.d/observium_agent_xinetd
+
+接続先をObserviumサーバに変更します。
+
+::
+
+ #only_from = 127.0.0.1 ::1
+ only_from = <observiumサーバのアドレス>
+
+スクリプトを配置する場所を変更する場合は、 **server** の箇所も変更しておきます。
+
+::
+
+ #server = /usr/bin/observium_agent
+ server = /usr/local/bin/observium_agent
+
+observium_agentスクリプトのコピー
+---------------------------------
+
+Observiumインストールディレクトリにある **observium_agentスクリプト** を、監視対象サーバにコピーします。
+Observiumサーバにログインし、ファイルを転送してください。
+
+::
+
+ scp /opt/observium/scripts/observium_agent <監視対象サーバ>:/tmp
+
+監視対象サーバにログインし、 **observium_agent_xinetd** に設定してあるパスへファイルを移動させます。
+デフォルトでは、/usr/bin/observium_agentになっています。
+
+::
+
+ sudo mv /tmp/observium_agent /usr/local/bin/observium_agent
+
+ローカルスクリプト (Unix Agent経由で動かすスクリプト)を配置する場所を変更する場合は、observium_agentスクリプトの編集をします。
+
+::
+
+ vi /usr/local/bin/observium_agent
+
+**AGENT_LIBDIR** のパスを変更します。
+
+::
+
+ #export AGENT_LIBDIR="/usr/lib/observium_agent"
+ export AGENT_LIBDIR="/usr/local/lib/observium_agent"
+
+ローカルスクリプトを配置するディレクトリを作成します。
+作成するディレクトリパスは、AGETN_LIBDIRに設定した内容に合わせてください。
+
+::
+
+ mkdir -p /usr/local/lib/observium_agent/local
+
+xinetdの再起動
+--------------
+
+xinetdを再起動して設定を反映させます。
+
+::
+
+ sudo systemctl restart xinetd
+
+Unix Agentを有効化する
+----------------------
+
+グローバルレベルで一括設定する場合は、Observiumサーバの **config.php** を編集します。
+
+::
+
+ vi /opt/observium/config.php
+
+以下の設定を追加します。
+
+::
+
+ $config['poller_modules']['unix-agent'] = 1;
+
+デバイス単位で設定する場合は、Web管理画面から設定できます。
+
+::
+
+ Device Settings -> Modules -> unix-agentをenebleに変更
+
+以上で、Unix Agentのインストールと設定は完了です。

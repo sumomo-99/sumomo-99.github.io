@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>[nload] nloadでネットワークモニタリング &mdash; Linux Tips 0.1 ドキュメント</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Linux Tips 0.1 ドキュメント" href="../index.html"/>
+        <link rel="up" title="Linux" href="index.html"/>
+        <link rel="next" title="ユーザーの一覧を取得する" href="passwd.html"/>
+        <link rel="prev" title="Let’s Encryptのコンパイルでエラーがでる" href="letsencrypt.html"/>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75466879-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+
+          
+            <a href="../index.html" class="icon icon-home"> Linux Tips
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+<a href="https://twitter.com/sumomo_99" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sumomo_99</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<br>
+<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Linux</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="asciiquarium.html">魚を鑑賞する方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bash_2048.html">[bash] bashで2048ゲーム</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7_dig.html">[CentOS 7] dig, host, nslookup, nsupdateコマンドをインストールする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7_systemd.html">[CentOS 7] systemdのログレベルを変更する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7_timezone.html">[CentOS 7] タイムゾーンを設定する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_search.html">[bash] 過去に実行したコマンドを検索する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dig_txt.html">[dig] DNSのTXTレコードを参照する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dummy_file.html">[touch, dd, head] ダミーファイルを作る</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environ.html">プロセスを実行した時の環境変数を知りたい</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file_num.html">カレントディレクトリ以下のファイル数を調べる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kipmi0.html">kipmi0プロセスのCPU使用率が100%になる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="letsencrypt.html">Let&#8217;s Encryptのコンパイルでエラーがでる</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">[nload] nloadでネットワークモニタリング</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">インストール環境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nload">nloadのインストール</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">nloadの起動</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">デバイスを指定して表示する</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i-o">グラフのスケールを変更する (-i, -o)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#m">複数のデバイスを1画面に表示する (-m)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t">データの取得間隔を変更する (-t)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nload-q">nloadを終了する (q)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">主なオプション</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="passwd.html">ユーザーの一覧を取得する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps_lstart.html">[ps] プロセスの起動日時を調べる方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">[pwd] pwdコマンドで物理パスを表示させる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="swap.html">swapを利用しているプロセスを調べる方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tar.html">[tar] tarコマンドの小技</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uptime.html">[uptime] システムの稼働時間を調べる</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../aws/index.html">AWS (Amazon Web Services)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcp/index.html">GCP (Google Cloud Platform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mysql/index.html">MySQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../redis/index.html">Redis (in-memory data structure store)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grafana/index.html">Grafana</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc-sphinx/index.html">Sphinx (Python Documentation Generator)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observium/index.html">Observium</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Linux Tips</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Linux</a> &raquo;</li>
+      
+    <li>[nload] nloadでネットワークモニタリング</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nload-nload">
+<h1>[nload] nloadでネットワークモニタリング<a class="headerlink" href="#nload-nload" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<img alt="../_images/nload01.PNG" src="../_images/nload01.PNG" />
+<p><strong>nload</strong> は、 <strong>CLI</strong> (Command Line Interface)でネットワークトラフィックをモニタリングするツールです。
+リアルタイムにネットワークトラフィックを取得することができます。
+デフォルトでは <em>500ミリ秒</em> 間隔でデータを取得します。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id5">インストール環境</a></li>
+<li><a class="reference internal" href="#nload" id="id6">nloadのインストール</a></li>
+<li><a class="reference internal" href="#id2" id="id7">nloadの起動</a></li>
+<li><a class="reference internal" href="#id3" id="id8">デバイスを指定して表示する</a></li>
+<li><a class="reference internal" href="#i-o" id="id9">グラフのスケールを変更する (-i, -o)</a></li>
+<li><a class="reference internal" href="#m" id="id10">複数のデバイスを1画面に表示する (-m)</a></li>
+<li><a class="reference internal" href="#t" id="id11">データの取得間隔を変更する (-t)</a></li>
+<li><a class="reference internal" href="#nload-q" id="id12">nloadを終了する (q)</a></li>
+<li><a class="reference internal" href="#id4" id="id13">主なオプション</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id5">インストール環境</a><a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>CentOS 7.1</p>
+</div>
+<div class="section" id="nload">
+<h2><a class="toc-backref" href="#id6">nloadのインストール</a><a class="headerlink" href="#nload" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><strong>EPEL</strong> リポジトリからインストールします。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>yum install enablerepo=epel nload
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id7">nloadの起動</a><a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre><span></span>nload
+nload [devices]
+nload [options] [devices]
+</pre></div>
+</div>
+<p>引数に何も指定しない場合は、全てのネットワークデバイスをモニタリングします。</p>
+<p>デバイスの切り替えは、以下のキーでできます。</p>
+<ul class="simple">
+<li>次のデバイスに切り替える：右カーソル、下カーソル、PageDown、Enter、Tab</li>
+<li>前のデバイスに切り替える：左カーソル、上カーソル、PageUp</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id8">デバイスを指定して表示する</a><a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>引数にデバイスを指定することで、特定のデバイスだけモニタリングします。</p>
+<p>デバイスeth0だけモニタリングする:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>nload eth0
+</pre></div>
+</div>
+</div>
+<div class="section" id="i-o">
+<h2><a class="toc-backref" href="#id9">グラフのスケールを変更する (-i, -o)</a><a class="headerlink" href="#i-o" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ネットワークトラフィックが少なく、グラフが表示されない場合はオプション( <a class="reference internal" href="#cmdoption-i"><code class="xref std std-option docutils literal"><span class="pre">-i</span></code></a>, <a class="reference internal" href="#cmdoption-o"><code class="xref std std-option docutils literal"><span class="pre">-o</span></code></a> )でスケールを変更することができます。</p>
+<p>例）インバウンドのスケール(-i)を64kbps、アウトバウンドのスケール(-o)を64kbpsに変更する。:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>nload -i 64 -o 64
+</pre></div>
+</div>
+</div>
+<div class="section" id="m">
+<h2><a class="toc-backref" href="#id10">複数のデバイスを1画面に表示する (-m)</a><a class="headerlink" href="#m" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="#cmdoption-m"><code class="xref std std-option docutils literal"><span class="pre">-m</span></code></a> オプションで複数のデバイスを1画面に表示することができます。
+ただし、グラフ表示はできなくなります。</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>nload -m
+</pre></div>
+</div>
+<img alt="../_images/nload-m.PNG" src="../_images/nload-m.PNG" />
+</div>
+<div class="section" id="t">
+<h2><a class="toc-backref" href="#id11">データの取得間隔を変更する (-t)</a><a class="headerlink" href="#t" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>データの取得間隔を変更するには、 <a class="reference internal" href="#cmdoption-t"><code class="xref std std-option docutils literal"><span class="pre">-t</span></code></a> オプションを利用します。
+デフォルトは <em>500ミリ秒</em> です。</p>
+<p>例）取得間隔を1秒 (1000ミリ秒)に変更する:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>nload -t 1000
+</pre></div>
+</div>
+</div>
+<div class="section" id="nload-q">
+<h2><a class="toc-backref" href="#id12">nloadを終了する (q)</a><a class="headerlink" href="#nload-q" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><code class="kbd docutils literal"><span class="pre">q</span></code> キーを押すとnloadを終了できます。</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id13">主なオプション</a><a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-i">
+<code class="descname">-i</code><code class="descclassname"> &lt;スケール最大値&gt;</code><a class="headerlink" href="#cmdoption-i" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>インバウンドのスケールを変更します。
+デフォルトは <strong>10240kbps</strong> です。</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-o">
+<code class="descname">-o</code><code class="descclassname"> &lt;スケール最大値&gt;</code><a class="headerlink" href="#cmdoption-o" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>アウトバウンドのスケールを変更します。
+デフォルトは <strong>10240kbps</strong> です。</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-m">
+<code class="descname">-m</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-m" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>複数のデバイスを1画面に表示します。
+ただし、グラフ表示はできなくなります。</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-t">
+<code class="descname">-t</code><code class="descclassname"> &lt;時間&gt;</code><a class="headerlink" href="#cmdoption-t" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>データの取得間隔を変更します。
+ミリ秒単位で指定します。
+デフォルトは <strong>500ミリ秒</strong> です。</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+スポンサーリンク
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ad001 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4504494943418731"
+     data-ad-slot="2836570009"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="passwd.html" class="btn btn-neutral float-right" title="ユーザーの一覧を取得する" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="letsencrypt.html" class="btn btn-neutral" title="Let’s Encryptのコンパイルでエラーがでる" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, sumomo_99.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

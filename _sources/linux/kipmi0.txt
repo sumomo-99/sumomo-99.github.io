@@ -1,0 +1,44 @@
+kipmi0プロセスのCPU使用率が100%になる
+=====================================
+
+.. highlight:: console
+
+**kipmi** のプロセスのCPU使用率が100%に張り付くことがあります。
+OSやプロセスの再起動を行わずに **kipmi** プロセスのCPU使用率を下げる方法を紹介します。
+
+事前確認
+--------
+現在のkipmi0プロセスのCPU使用率をtopコマンドで確認しておきます。
+kipmi0プロセスのCPU使用率が100%になっています。
+
+::
+
+ $ top -p <kipmi0のPID>
+
+   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+  4023 root      39  19     0    0    0 R 100.0  0.0  16804:00 kipmi0
+ 
+手順
+----
+**kipmid_max_busy_us** パラメータを調整することで、CPU使用率を下げることができます。
+OSやプロセスの再起動は必要ありません。
+
+::
+
+ # echo 100 > /sys/module/ipmi_si/parameters/kipmid_max_busy_us
+ 
+設定後にkipmi0プロセスのCPU使用率を確認すると、CPU使用率が下がっています。
+
+::
+
+ $ top -p <kipmi0のPID>
+
+   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+  4023 root      34  19     0    0    0 R  0.0  0.0  16804:29 kipmi0
+
+.. seealso::
+
+ ``kipmid_max_busy_us`` パラメータにはkipmidのスリープ間隔をマイクロ秒で設定します。
+ パラメータの説明は、\ `The Linux IPMI Driver <https://www.kernel.org/doc/Documentation/IPMI.txt>`_\ のドキュメントに記載されています。
+
+ the kipmid_max_busy_us sets the maximum amount of time, in microseconds, that kipmid will spin before sleeping for a tick.  This value sets a balance between performance and CPU waste and needs to be tuned to your needs.  Maybe, someday, auto-tuning will be added, but that's not a simple thing and even the auto-tuning would need to be tuned to the user's desired performance.

@@ -1,0 +1,16 @@
+Sphinx (Python Documentation Generator)
++++++++++++++++++++++++++++++++++++++++++
+
+Sphinxは簡単にきれいなドキュメントを作成するためのツールです。
+
+* `Sphinx Documentation <http://www.sphinx-doc.org/en/stable/>`_
+* `Sphinx Documentation (日本語) <http://www.sphinx-doc.org/ja/stable/>`_
+* `Sphinx 日本ユーザ会 <http://sphinx-users.jp/>`_
+
+このサイトもSphinxで作成しています。
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   *

@@ -1,0 +1,26 @@
+カレントディレクトリ以下のファイル数を調べる
+=============================================
+
+.. highlight:: console
+
+i-nodeの枯渇調査など、どのディレクトリに多くのファイルがあるのかを調べたい時があります。
+カレントディレクトリ以下のファイル数(サブディレクトリも含めたファイル数)は、以下のコマンドで調べることができます。
+
+:command:`find . -type f | cut -d "/" -f 2 | sort | uniq -c | sort -nr`
+
+実行例::
+
+ # find . -type f | cut -d "/" -f 2 | sort | uniq -c | sort -nr
+  57493 usr
+  45366 proc
+  22046 var
+  16398 sys
+  2419 root
+  1144 etc
+  329 boot
+  223 run
+  19 home
+  8 tmp
+  2 mnt
+  1 .autorelabel
+ 

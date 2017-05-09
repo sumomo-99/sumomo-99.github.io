@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>レプリケーション遅延をわざと発生させる方法 &mdash; Linux Tips 0.1 ドキュメント</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Linux Tips 0.1 ドキュメント" href="../index.html"/>
+        <link rel="up" title="MySQL" href="index.html"/>
+        <link rel="next" title="mysqlbinlogで指定日時のログを取り出す方法" href="mysqlbinlog.html"/>
+        <link rel="prev" title="MySQL" href="index.html"/>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75466879-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+
+          
+            <a href="../index.html" class="icon icon-home"> Linux Tips
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+<a href="https://twitter.com/sumomo_99" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @sumomo_99</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<br>
+<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aws/index.html">AWS (Amazon Web Services)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gcp/index.html">GCP (Google Cloud Platform)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">MySQL</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">レプリケーション遅延をわざと発生させる方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">遅延レプリケーションの設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">遅延状態を確認する</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">遅延レプリケーションを解除する</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mysqlbinlog.html">mysqlbinlogで指定日時のログを取り出す方法</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../redis/index.html">Redis (in-memory data structure store)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grafana/index.html">Grafana</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc-sphinx/index.html">Sphinx (Python Documentation Generator)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observium/index.html">Observium</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Linux Tips</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">MySQL</a> &raquo;</li>
+      
+    <li>レプリケーション遅延をわざと発生させる方法</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>レプリケーション遅延をわざと発生させる方法<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>MySQL5.6から意図的にレプリケーション遅延を発生させることができます。
+スレーブが遅延した時のアプリケーション動作を確認するのに利用できます。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id5">遅延レプリケーションの設定</a></li>
+<li><a class="reference internal" href="#id3" id="id6">遅延状態を確認する</a></li>
+<li><a class="reference internal" href="#id4" id="id7">遅延レプリケーションを解除する</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id5">遅延レプリケーションの設定</a><a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>遅延させたいスレーブサーバで、 <code class="docutils literal"><span class="pre">CHANGE</span> <span class="pre">MASTER</span></code> コマンドを実行して遅延レプリケーションを設定します。</p>
+<p>20秒の遅延を発生させる場合:</p>
+<div class="highlight-mysql"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">stop</span> <span class="n">slave</span><span class="p">;</span>
+<span class="o">&gt;</span> <span class="k">change</span> <span class="n">master</span> <span class="k">to</span> <span class="n">master_delay</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+<span class="o">&gt;</span> <span class="n">start</span> <span class="n">slave</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id6">遅延状態を確認する</a><a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">SQL_Delay</span></code> に設定した時間が表示されるか確認します。</p>
+<div class="highlight-mysql"><div class="highlight"><pre><span></span>&gt; show slave status\G
+ (省略)
+SQL_Delay: 20
+ (省略)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id7">遅延レプリケーションを解除する</a><a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>遅延レプリケーションを解除するときは、遅延時間に <strong>0</strong> を設定します。</p>
+<div class="highlight-mysql"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">stop</span> <span class="n">slave</span><span class="p">;</span>
+<span class="o">&gt;</span> <span class="k">change</span> <span class="n">master</span> <span class="k">to</span> <span class="n">master_delay</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="o">&gt;</span> <span class="n">start</span> <span class="n">slave</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+スポンサーリンク
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ad001 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4504494943418731"
+     data-ad-slot="2836570009"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mysqlbinlog.html" class="btn btn-neutral float-right" title="mysqlbinlogで指定日時のログを取り出す方法" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="MySQL" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, sumomo_99.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

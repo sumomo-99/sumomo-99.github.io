@@ -1,0 +1,8 @@
+Grafana
++++++++++++++++++++++++++++++
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   *

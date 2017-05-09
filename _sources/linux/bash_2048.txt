@@ -1,0 +1,70 @@
+[bash] bashで2048ゲーム
+=======================
+
+.. highlight:: console
+
+.. image:: images/bash_2048/bash2048-01.PNG
+
+``bash2048`` はbashで動く **2048ゲーム** です。
+
+.. contents::
+   :local:
+   :depth: 1 
+
+インストール＆実行
+------------------
+
+::
+
+ $ cd /usr/local/games/
+ $ git clone https://github.com/mydzor/bash2048.git
+ $ cd bash2048
+ $ ./bash2048.sh
+ 
+オプション
+----------
+
+.. option:: -b <数値>       
+
+ 盤面のサイズを3～9の範囲で変更します。
+ デフォルトは4です。
+
+.. option:: -t <数値>       
+
+ 勝利までの点数を指定します。
+ デフォルトは2048です。
+
+.. option:: -l <ファイル名>
+
+ デバッグログを出力します。
+
+.. option:: -r      
+
+ セーブしたゲームを読み込みします。
+ ゲーム中に :kbd:`Control-c` で終了するときにセーブできます。
+
+.. option:: -h
+
+ ヘルプを表示します。
+ 
+オプションをつけた実行例
+
+盤面のサイズを3×3に変更したい場合::
+
+ $ ./bash2048.sh -b 3
+
+.. image:: images/bash_2048/bash2048-03.PNG
+
+セーブデータを読み込む場合::
+
+ $ ./bash2048.sh -r
+
+操作方法
+--------
+
+カーソルキーで操作します。
+:kbd:`Cotorl-c` で終了します。
+
+.. image:: images/bash_2048/bash2048-02.PNG
+.. image:: images/bash_2048/bash2048-04.PNG
+.. image:: images/bash_2048/bash2048-05.PNG

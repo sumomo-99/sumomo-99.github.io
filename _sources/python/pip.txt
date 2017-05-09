@@ -1,0 +1,17 @@
+pipのインストール
+==========================
+
+.. highlight:: none
+
+Python2.7.9, Python3.4以上であれば、Pythonと一緒にpipもインストールされます。
+pipがインストールされていない場合、以下の手順でpipをインストールすることができます。
+
+#. get-pip.pyをダウンロードする。
+   ::
+
+    wget https://bootstrap.pypa.io/get-pip.py
+
+#. ダウンロードしたget-pip.pyを実行する。
+   ::
+
+    python get-pip.py

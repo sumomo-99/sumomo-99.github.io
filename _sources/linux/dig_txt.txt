@@ -1,0 +1,60 @@
+[dig] DNSのTXTレコードを参照する
+==================================
+
+.. highlight:: console
+
+:command:`dig`\ コマンドでDNSのTXTレコード（テキストレコード）を参照するには、\ **-tオプション**\ または\ **引数**\ でタイプを指定します。
+
+.. topic:: TXTレコード
+
+  DNSのTXTレコードは、テキスト情報を提供するDNSレコードです。任意のテキスト情報を定義することができ、ドメインの所有権確認などで利用されます。
+
+-tオプションで指定する方法
+--------------------------
+
+:command:`dig -t txt ドメイン名`
+
+実行例::
+
+ $ dig -t txt 410gone.click
+ 
+ ; <<>> DiG 9.9.4-RedHat-9.9.4-29.el7_2.3 <<>> -t txt 410gone.click
+ ;; global options: +cmd
+ ;; Got answer:
+ ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 9364
+ ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+ 
+ ;; OPT PSEUDOSECTION:
+ ; EDNS: version: 0, flags:; udp: 512
+ ;; QUESTION SECTION:
+ ;410gone.click.                 IN      TXT
+ 
+ ;; ANSWER SECTION:
+ 410gone.click.          299     IN      TXT     "google-site-verification=XXXXXX"
+ :
+ :
+
+引数で指定する方法
+------------------
+
+:command:`dig ドメイン名 txt`
+
+実行例::
+
+ $ dig 410gone.click txt
+ ; <<>> DiG 9.9.4-RedHat-9.9.4-29.el7_2.3 <<>> 410gone.click txt
+ ;; global options: +cmd
+ ;; Got answer:
+ ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64506
+ ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+ 
+ ;; OPT PSEUDOSECTION:
+ ; EDNS: version: 0, flags:; udp: 512
+ ;; QUESTION SECTION:
+ ;410gone.click.                 IN      TXT
+ 
+ ;; ANSWER SECTION:
+ 410gone.click.          296     IN      TXT     "google-site-verification=XXXXXX"
+ :
+ :
+ 

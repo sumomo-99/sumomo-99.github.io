@@ -1,0 +1,27 @@
+.. Linux Tips documentation master file, created by
+   sphinx-quickstart on Tue Aug 23 11:39:37 2016.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+###################
+410Gone: Linux Tips
+###################
+
+インフラエンジニアの備忘録です。
+Linuxの構築、運用のメモ書きです。
+
+目次
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+
+   linux/index.rst
+   aws/index.rst
+   gcp/index.rst
+   mysql/index.rst
+   redis/index.rst
+   grafana/index.rst
+   python/index.rst
+   doc-sphinx/index.rst
+   observium/index.rst

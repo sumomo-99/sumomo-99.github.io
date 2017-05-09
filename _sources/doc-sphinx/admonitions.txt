@@ -1,0 +1,48 @@
+警告ディレクティブ
+===========================
+
+Sphinxの警告ディレクティブごとに、表示の違いを確認してみました。
+テーマはsphinx_rtd_themeを利用しています。
+
+.. attention::
+
+   :command:`.. attention::`
+
+.. caution::
+
+   :command:`.. caution::`
+
+.. danger::
+
+   :command:`.. danger::`
+
+.. error::
+
+   :command:`.. error::`
+
+.. hint::
+
+   :command:`.. hint::`
+
+.. important::
+
+   :command:`.. important::`
+
+.. note::
+
+   :command:`.. note::`
+
+.. tip::
+
+   :command:`.. tip::`
+
+.. warning::
+
+   :command:`.. warning::`
+
+.. admonition:: タイトル付き
+
+   :command:`.. admonition:: title`
+
+   タイトルを指定したいときはadmonitionディレクティブを使います。
+

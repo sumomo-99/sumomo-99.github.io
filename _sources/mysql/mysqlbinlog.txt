@@ -1,0 +1,37 @@
+mysqlbinlogで指定日時のログを取り出す方法
+=========================================
+
+.. highlight:: mysql
+
+MySQLのバイナリログはバイナリ形式で書き込まれます。
+バイナリログをテキスト形式に変換するには、 ``mysqlbinlog`` コマンドを利用します。
+
+::
+
+ mysqlbinlog [options] logfile
+
+オプションを指定しない場合、バイナリログ全ての内容をダンプします。
+指定日時のログを取り出したいときは、以下のオプションを指定します。
+
+.. option:: --start-datetime
+
+   開始日時を指定します。
+
+.. option:: --stop-datetime
+
+   終了日時を指定します。
+
+実行例::
+
+ mysqlbinlog --start-datetime="2016-4-15 9:00:00" --stop-datetime="2016-4-15 9:10:00" mysql-bin.000003
+
+ダンプは標準出力に出力されるので、パイプやリダイレクトを組み合わせてほうが便利です。
+
+lessで表示::
+
+ mysqlbinlog mysql-bin.000003 | less
+
+ファイルに出力::
+
+ mysqlbinlog mysql-bin.000003 > /tmp/binlog.dump
+ 
